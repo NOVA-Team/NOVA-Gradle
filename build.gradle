@@ -1,0 +1,26 @@
+apply plugin: 'groovy'
+apply from: 'gradle/modules/utils.gradle'
+apply plugin: 'maven-publish'
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+}
+
+publishing {
+	publications {
+		main(MavenPublication) {
+
+		}
+	}
+	repositories {
+		if (System.getenv("MAVEN_DIR") != null) {
+			maven {
+				url System.getenv("MAVEN_DIR")
+			}
+		}
+	}
+}
