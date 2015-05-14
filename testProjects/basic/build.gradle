@@ -1,0 +1,10 @@
+buildscript {
+	repositories {
+		flatDir dirs: "../../build/libs"
+	}
+	dependencies {
+		classpath "nova.gradle:NovaGradle:0.1.0"
+	}
+}
+
+apply plugin: "nova.gradle"

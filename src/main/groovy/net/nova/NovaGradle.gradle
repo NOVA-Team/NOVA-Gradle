@@ -1,9 +1,0 @@
-class NovaGradle implements Plugin<Project> {
-    void apply(Project project) {
-        project.extensions.create("novaHello", GreetingPluginExtension)
-        project.task('novaHi') << {
-            println "${project.greeting.message} from ${project.greeting.greeter}"
-        }
-    }
-}
-

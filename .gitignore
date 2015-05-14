@@ -14,22 +14,15 @@
 # gradle
 !/build.gradle
 !/settings.gradle
-!/build.properties
+!/gradle.properties
 !/gradlew*
 !/gradle
-
-# checkstyle
-!/checkstyle*.xml
 
 # Travis
 !/.travis.yml
 
-# unwanted os-generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-*~
+#TestProject
+!/testProjects
+
+.gradle/
+build/
