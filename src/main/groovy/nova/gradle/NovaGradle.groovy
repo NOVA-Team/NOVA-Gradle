@@ -8,7 +8,7 @@ import java.util.regex.Pattern
 
 class NovaGradle implements Plugin<Project> {
 
-	public static project;
+	public static Project project;
 
 	Pattern taskPattern = Pattern.compile("run(.+)(Server|Client)")
 
