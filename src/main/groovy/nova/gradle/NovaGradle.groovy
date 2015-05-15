@@ -10,13 +10,13 @@ import java.util.regex.Pattern
 @CompileStatic
 class NovaGradle implements Plugin<Project> {
 
-	public static Project project;
+//	public static Project project;
 
 	Pattern taskPattern = Pattern.compile("run(.+)(Server|Client)")
 
 	@Override
-	void apply(Project theProject) {
-		this.project = theProject
+	void apply(Project project) {
+//		this.project = theProject
 
 		addWrapperTask(project)
 	}
