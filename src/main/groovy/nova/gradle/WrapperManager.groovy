@@ -1,6 +1,7 @@
 package nova.gradle
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Project
 
 /**
  * @author rx14
@@ -13,9 +14,9 @@ class WrapperManager {
 		wrappers.put(w.name, w)
 	}
 
-	static JavaExec get(String wrapper, Locality locality, Map<String, String> options) {
+	static void get(Project project, String taskName, String wrapper, Locality locality, Map<String, String> options) {
 		Wrapper w = wrappers.get(wrapper)
 
-		w.getTask(locality, options)
+		w.addTask(project, taskName, locality, options)
 	}
 }

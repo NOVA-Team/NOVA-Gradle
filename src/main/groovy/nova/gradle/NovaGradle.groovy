@@ -29,9 +29,8 @@ class NovaGradle implements Plugin<Project> {
 				def wrapper = match.group(1)
 				def locality = Locality.fromString(match.group(2))
 
-				WrapperManager.get(wrapper, locality, [:])
+				WrapperManager.get(project, taskName, wrapper, locality, [:])
 			}
 		}
 	}
 }
-

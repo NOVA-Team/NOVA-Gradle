@@ -1,11 +1,11 @@
 package nova.gradle
 
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.JavaExec
+import org.gradle.api.Project
 
 @CompileStatic
 interface Wrapper {
 	String getName();
 
-	JavaExec getTask(Locality locality, Map<String, String> options);
+	void addTask(Project project, String taskName, Locality locality, Map<String, String> options);
 }
