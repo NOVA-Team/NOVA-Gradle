@@ -1,6 +1,7 @@
 package nova.gradle
 
 import groovy.transform.CompileStatic
+import nova.gradle.minecraft.MinecraftWrapper
 import org.gradle.api.Project
 
 /**
@@ -9,6 +10,10 @@ import org.gradle.api.Project
 @CompileStatic
 class WrapperManager {
 	public static final Map<String, Wrapper> wrappers = new HashMap<>()
+
+	static {
+		add(new MinecraftWrapper())
+	}
 
 	static void add(Wrapper w) {
 		wrappers.put(w.name, w)
