@@ -1,8 +1,8 @@
 package nova.gradle
 
-/**
- * @author rx14
- */
+import groovy.transform.CompileStatic
+
+@CompileStatic
 enum Locality {
 	Client, Server;
 

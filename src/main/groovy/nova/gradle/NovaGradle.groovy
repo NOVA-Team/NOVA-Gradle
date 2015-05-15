@@ -1,11 +1,13 @@
 package nova.gradle
 
+import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+@CompileStatic
 class NovaGradle implements Plugin<Project> {
 
 	public static Project project;

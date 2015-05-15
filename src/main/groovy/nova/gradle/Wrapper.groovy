@@ -1,7 +1,9 @@
 package nova.gradle
 
+import groovy.transform.CompileStatic
 import org.gradle.api.tasks.JavaExec
 
+@CompileStatic
 interface Wrapper {
 	String getName();
 

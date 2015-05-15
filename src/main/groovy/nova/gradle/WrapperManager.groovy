@@ -1,10 +1,11 @@
 package nova.gradle
 
-import org.gradle.api.tasks.JavaExec
+import groovy.transform.CompileStatic
 
 /**
  * @author rx14
  */
+@CompileStatic
 class WrapperManager {
 	public static final Map<String, Wrapper> wrappers = new HashMap<>()
 
