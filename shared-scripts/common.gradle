@@ -1,27 +1,3 @@
-// Add all the repositories
-buildscript {
-	repositories {
-		mavenLocal()
-		jcenter()
-		maven {
-			name "forge"
-			url "http://files.minecraftforge.net/maven"
-		}
-		maven {
-			name "sonatype"
-			url "https://oss.sonatype.org/content/repositories/snapshots/"
-		}
-		maven {
-			name "nova"
-			url 'http://maven.novaapi.net/'
-		}
-	}
-	dependencies {
-		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
-		classpath 'us.phildop:gradle-sublimetext-plugin:0.5.3'
-	}
-}
-
 configurations.all {
 	resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
 }
