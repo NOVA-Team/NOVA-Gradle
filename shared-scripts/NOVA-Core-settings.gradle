@@ -1,0 +1,4 @@
+if (hasProperty("nova.core.location")) {
+	include ":NovaCore"
+	project(":NovaCore").projectDir = new File(properties["nova.core.location"])
+}

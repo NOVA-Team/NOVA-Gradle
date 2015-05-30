@@ -24,5 +24,7 @@
 #TestProject
 !/testProjects
 
+!/shared-scripts
+
 .gradle/
 build/

@@ -1,0 +1,4 @@
+if (hasProperty("nova.wrapper.mc1710.location")) {
+	include ":NovaWrapper-MC:1.7.10"
+	project(":NovaWrapper-MC:1.7.10").projectDir = new File(properties["nova.wrapper.mc1710.location"])
+}

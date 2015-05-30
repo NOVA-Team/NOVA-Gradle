@@ -1,0 +1,66 @@
+// Add all the repositories
+buildscript {
+	repositories {
+		mavenLocal()
+		jcenter()
+		maven {
+			name "forge"
+			url "http://files.minecraftforge.net/maven"
+		}
+		maven {
+			name "sonatype"
+			url "https://oss.sonatype.org/content/repositories/snapshots/"
+		}
+		maven {
+			name "nova"
+			url 'http://maven.novaapi.net/'
+		}
+	}
+	dependencies {
+		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
+		classpath 'us.phildop:gradle-sublimetext-plugin:0.5.3'
+	}
+}
+
+configurations.all {
+	resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
+}
+
+repositories {
+	mavenLocal()
+	jcenter()
+	maven {
+		name "nova"
+		url 'http://maven.novaapi.net/'
+	}
+}
+
+// Basic ide plugin setup on every project
+apply plugin: 'sublimeText'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+sublimeText {
+	defaultFileExcludePatterns = ['.project', '.classpath', '.pydevproject']
+	defaultFolderExcludePatterns = ['.gradle', 'bin', 'build', '.settings']
+	generateSublimeJavaClasspath = true
+	generateSublimeJavaSrcpath = true
+	addGradleCompile = true
+}
+
+idea.project?.languageLevel = "1.8"
+
+// Add writePom function
+ext {
+	writePom = { config ->
+		{ xmlProvider ->
+			def node = xmlProvider.asNode()
+
+			node.appendNode("description", config["info.description"])
+			node.appendNode("inceptionYear", config["info.inceptionYear"])
+			node.appendNode("packaging", config["packaging"])
+			node.appendNode("organisation")
+			    .appendNode("name", config["info.organization.name"])
+		}
+	}
+}

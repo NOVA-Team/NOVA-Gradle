@@ -1,0 +1,66 @@
+apply from: "https://raw.githubusercontent.com/NOVA-Team/NOVA-Gradle/master/shared-scripts/common.gradle"
+
+apply plugin: 'java'
+apply plugin: 'jacoco'
+
+compileJava {
+	sourceCompatibility = '1.8'
+	options.encoding = 'UTF-8'
+	options.fork = true
+	options.compilerArgs << '-Xlint'
+}
+
+dependencies {
+	testCompile "junit:junit:4.12"
+	testCompile "org.assertj:assertj-core:3.0.0"
+	testCompile "org.mockito:mockito-core:1.+"
+}
+
+task sourceJar(type: Jar) {
+	from sourceSets.main.java
+	from sourceSets.main.resources
+	classifier = "sources"
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	from javadoc.destinationDir
+	classifier 'javadoc'
+}
+
+artifacts {
+	archives jar
+	archives sourceJar
+	archives javadocJar
+}
+
+test {
+	forkEvery = 1
+	maxParallelForks = Runtime.getRuntime().availableProcessors();
+
+	testLogging {
+		exceptionFormat = 'full'
+		showStandardStreams = true
+	}
+
+	beforeTest { descriptor ->
+		def classPadded = String.format("%-50s", descriptor.className)
+		logger.lifecycle("Running test ${classPadded} ${descriptor.name}()")
+	}
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled = true // coveralls plugin depends on xml format report
+		html.enabled = true
+	}
+}
+
+task checkTestStyle << {
+	sourceSets.test.java.each { file ->
+		if (file.text.contains("import static org.junit.Assert")) {
+			throw new GradleException("File $f.name uses junit assertions, please use assertj assertions! See https://joel-costigliola.github.io/assertj/ to learn about assertj.")
+		}
+	}
+}
+
+test.dependsOn checkTestStyle
