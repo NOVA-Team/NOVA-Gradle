@@ -36,7 +36,7 @@ repositories {
 }
 
 // Basic ide plugin setup on every project
-apply plugin: 'sublimeText'
+apply plugin: us.phildop.gradle.sublimetext2.plugin.SublimeText2Plugin
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
