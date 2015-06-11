@@ -1,11 +1,30 @@
 plugins {
 	id "groovy"
 	id "com.gradle.plugin-publish" version "0.9.0"
+	id "maven-publish"
+}
+
+repositories {
+	jcenter()
+	mavenLocal()
+	maven {
+		name "RX14"
+		url "http://mvn.rx14.co.uk/local/"
+	}
 }
 
 dependencies {
-    compile gradleApi()
-    compile localGroovy()
+	compile gradleApi()
+	compile localGroovy()
+	compile "uk.co.rx14.jmclaunchlib:jMCLaunchLib:0.2.1"
+}
+
+publishing {
+	publications {
+		main(MavenPublication) {
+			from components.java
+		}
+	}
 }
 
 pluginBundle {

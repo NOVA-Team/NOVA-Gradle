@@ -1,9 +1,10 @@
 buildscript {
 	repositories {
-		flatDir dirs: "../../build/libs"
+		mavenLocal()
+		jcenter()
 	}
 	dependencies {
-		classpath "nova.gradle:NovaGradle:0.1.0"
+		classpath "nova.gradle:NovaGradle:0.1.0-SNAPSHOT"
 	}
 }
 
