@@ -1,13 +1,14 @@
 package nova.gradle
 
 import groovy.transform.CompileStatic
+import org.gradle.api.GradleException
+import org.gradle.api.GradleScriptException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-@CompileStatic
 class NovaGradle implements Plugin<Project> {
 
 //	public static Project project;
@@ -17,6 +18,18 @@ class NovaGradle implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 //		this.project = theProject
+
+		if (!project.plugins.hasPlugin("java")) {
+			throw new GradleException("Please apply the java plugin!")
+		}
+
+		project.repositories {
+			jcenter()
+			maven {
+				name = "NovaAPI"
+				url = "http://maven.novaapi.net/"
+			}
+		}
 
 		addWrapperTask(project)
 	}
