@@ -8,9 +8,24 @@ buildscript {
 	}
 }
 
+apply plugin: "java"
+apply plugin: "nova.gradle"
+
+dependencies {
+	compile "nova.core:NovaCore:0.1.0-SNAPSHOT"
+}
+
 repositories {
 	mavenLocal()
 }
 
-apply plugin: "java"
-apply plugin: "nova.gradle"
+nova {
+	wrappers {
+		"17" {
+			wrapper = "nova.wrapper.mc1710:NovaWrapper-MC1.7.10:0.1-SNAPSHOT"
+		}
+		"18" {
+			wrapper = "nova.wrapper.mc18:NovaWrapper-MC1.8:0.1-SNAPSHOT"
+		}
+	}
+}

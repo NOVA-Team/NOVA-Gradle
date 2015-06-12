@@ -1,11 +1,12 @@
 package nova.gradle
 
 import groovy.transform.CompileStatic
+import nova.gradle.extensions.WrapperConfigExtension
 import org.gradle.api.Project
 
 @CompileStatic
 interface Wrapper {
-	String getName();
+	boolean canHandle(WrapperConfigExtension extension, Locality locality);
 
-	void addTask(Project project, String taskName, Locality locality, Map<String, String> options);
+	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality);
 }

@@ -1,7 +1,8 @@
 package nova.gradle
 
 import groovy.transform.CompileStatic
-import nova.gradle.minecraft.MinecraftWrapper
+import nova.gradle.extensions.WrapperConfigExtension
+import nova.gradle.wrappers.MinecraftWrapper
 import org.gradle.api.Project
 
 /**
@@ -9,19 +10,29 @@ import org.gradle.api.Project
  */
 @CompileStatic
 class WrapperManager {
-	public static final Map<String, Wrapper> wrappers = new HashMap<>()
+	public static final List<Wrapper> wrappers = new ArrayList<>()
 
 	static {
 		add(new MinecraftWrapper())
 	}
 
 	static void add(Wrapper w) {
-		wrappers.put(w.name, w)
+		wrappers.add(w)
 	}
 
-	static void get(Project project, String taskName, String wrapper, Locality locality, Map<String, String> options) {
-		Wrapper w = wrappers.get(wrapper)
+	static JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality) {
+		for (wrapper in wrappers) {
+			if (wrapper.canHandle(extension, locality)) {
+				return wrapper.getLaunch(project, extension, locality)
+			}
+		}
 
-		w.addTask(project, taskName, locality, options)
+		throw new WrapperNotFoundException("Could not find wrapper for $extension $locality")
+	}
+
+	public static class WrapperNotFoundException extends RuntimeException {
+		WrapperNotFoundException(String message) {
+			super(message)
+		}
 	}
 }
