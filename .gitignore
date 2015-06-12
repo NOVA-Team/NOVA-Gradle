@@ -21,8 +21,8 @@
 # Travis
 !/.travis.yml
 
-#TestProject
 !/testProjects
+!/example
 
 !/shared-scripts
 
