@@ -26,9 +26,9 @@ pluginBundle {
 	plugins {
 		novaPlugin {
 			id = 'nova.gradle'
-			displayName = "Nova Gradle"
+			displayName = "NOVA-Gradle"
 
-			description = "Help for running a NOVAAPI project in wrappers."
+			description = "Gradle plugin which enables style checking and running of Nova mods."
 
 			website = "http://novaapi.net/"
 			vcsUrl = "https://github.com/NOVAAPI/NovaGradle/"
