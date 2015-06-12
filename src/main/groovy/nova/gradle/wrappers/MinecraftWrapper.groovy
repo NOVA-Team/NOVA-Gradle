@@ -4,6 +4,7 @@ import nova.gradle.JavaLaunchContainer
 import nova.gradle.Locality
 import nova.gradle.Wrapper
 import nova.gradle.extensions.WrapperConfigExtension
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import uk.co.rx14.jmclaunchlib.MCInstance
 import uk.co.rx14.jmclaunchlib.util.NullSupplier
@@ -25,6 +26,11 @@ class MinecraftWrapper implements Wrapper {
 
 	@Override
 	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality) {
+
+		if (!project.configurations.findByName("runtime")) {
+			throw new GradleException("Runtime configuration does not exist, make sure you have applied the java, scala or groovy plugins.")
+		}
+
 		project.dependencies {
 			runtime module(extension.wrapper) {
 				transitive = true

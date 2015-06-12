@@ -14,10 +14,6 @@ class NovaGradle implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
-		if (!(project.plugins.hasPlugin("java") || project.plugins.hasPlugin("groovy") || project.plugins.hasPlugin("scala"))) {
-			throw new GradleException("Please apply the java, scala or groovy plugin!")
-		}
-
 		project.extensions.create("nova", NovaExtension, project)
 
 		project.repositories {
