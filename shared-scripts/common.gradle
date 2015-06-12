@@ -1,3 +1,9 @@
+def javaversion = java.lang.Integer.parseInt(System.getProperty("java.runtime.version").split("\\.")[1])
+if (javaversion < 8) {
+	throw new GradleException("Please use JDK 8 or above!")
+}
+
+
 configurations.all {
 	resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
 }
