@@ -42,7 +42,7 @@ class MinecraftWrapper implements Wrapper {
 		def instancePath = FileSystems.default.getPath("run/$extension.name/$locality")
 		instancePath.toFile().mkdirs()
 
-		def (String forgeVersion, String mcVersion, List<String> extraLaunchArgs) = wrappers[extension.wrapper.split(":")[1]]
+		def (String forgeVersion, String mcVersion, List<String> extraVMArgs) = wrappers[extension.wrapper.split(":")[1]]
 
 		def instance = MCInstance.createForge(
 			mcVersion,
@@ -57,7 +57,7 @@ class MinecraftWrapper implements Wrapper {
 		new JavaLaunchContainer(
 			classpath: spec.classpath + project.configurations["runtime"],
 			launchArgs: spec.launchArgs.toList(),
-			jvmArgs: spec.jvmArgs.toList() + extraLaunchArgs,
+			jvmArgs: spec.jvmArgs.toList() + extraVMArgs,
 			mainClass: spec.mainClass
 		)
 	}
