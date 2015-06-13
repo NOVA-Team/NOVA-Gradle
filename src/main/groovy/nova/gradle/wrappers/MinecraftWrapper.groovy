@@ -55,7 +55,7 @@ class MinecraftWrapper implements Wrapper {
 		def spec = instance.getOfflineLaunchSpec("TestUser-${new Random().nextInt(100)}")
 
 		new JavaLaunchContainer(
-			classpath: spec.classpath + project.configurations["runtime"],
+			classpath: spec.classpath + project.configurations["default"],
 			launchArgs: spec.launchArgs.toList(),
 			jvmArgs: spec.jvmArgs.toList() + extraVMArgs,
 			mainClass: spec.mainClass
