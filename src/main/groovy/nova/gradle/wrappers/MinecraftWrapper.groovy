@@ -26,7 +26,10 @@ class MinecraftWrapper implements Wrapper {
 
 	@Override
 	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath) {
+		project.logger.lifecycle "Creating instance..."
 
+		def logLevelBefore = project.logging.level
+		project.logging.level = LogLevel.INFO
 		if (!project.configurations.findByName("runtime")) {
 			throw new GradleException("Runtime configuration does not exist, make sure you have applied the java, scala or groovy plugins.")
 		}
@@ -37,7 +40,6 @@ class MinecraftWrapper implements Wrapper {
 			}
 		}
 
-		project.logger.lifecycle "Creating instance..."
 
 		def (String forgeVersion, String mcVersion, List<String> extraVMArgs) = wrappers[extension.wrapper.split(":")[1]]
 
@@ -51,6 +53,7 @@ class MinecraftWrapper implements Wrapper {
 
 		def spec = instance.getOfflineLaunchSpec("TestUser-${new Random().nextInt(100)}")
 
+		project.logging.level = logLevelBefore
 		new JavaLaunchContainer(
 			extraClasspath: spec.classpath,
 			launchArgs: spec.launchArgs.toList(),
