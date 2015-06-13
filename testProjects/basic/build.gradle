@@ -4,7 +4,7 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath "nova.gradle:NovaGradle:0.1.4-SNAPSHOT"
+		classpath "nova.gradle:NovaGradle:0.1.5-SNAPSHOT"
 	}
 }
 
