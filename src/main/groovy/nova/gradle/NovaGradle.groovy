@@ -93,6 +93,6 @@ class NovaGradle implements Plugin<Project> {
 	}
 
 	def generateIdeaRunconfig(Element project, WrapperConfigExtension extension, Locality locality) {
-		project.getElementsByTagName("component").find { it.getAttribute(a)}
+		project.getElementsByTagName("component").find { it.getAttribute(a) }
 	}
 }
