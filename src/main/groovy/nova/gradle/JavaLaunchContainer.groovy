@@ -8,13 +8,13 @@ import org.gradle.api.tasks.JavaExec
 @CompileStatic
 @Immutable
 class JavaLaunchContainer {
-	List<File> classpath
+	List<File> extraClasspath
 	List<String> jvmArgs, launchArgs
 	String mainClass
 
 	JavaExec makeJavaExec(Project p, String taskName) {
 		p.tasks.create(taskName, JavaExec)
-			.setClasspath(p.files(classpath))
+			.setClasspath(p.files(extraClasspath) + p.configurations["runtime"])
 			.jvmArgs(jvmArgs)
 			.setArgs(launchArgs)
 			.setMain(mainClass)
