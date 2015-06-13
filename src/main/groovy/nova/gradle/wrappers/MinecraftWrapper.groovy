@@ -6,6 +6,8 @@ import nova.gradle.Wrapper
 import nova.gradle.extensions.WrapperConfigExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.logging.LogLevel
 import uk.co.rx14.jmclaunchlib.MCInstance
 import uk.co.rx14.jmclaunchlib.util.NullSupplier
 
@@ -30,16 +32,13 @@ class MinecraftWrapper implements Wrapper {
 
 		def logLevelBefore = project.logging.level
 		project.logging.level = LogLevel.INFO
-		if (!project.configurations.findByName("runtime")) {
-			throw new GradleException("Runtime configuration does not exist, make sure you have applied the java, scala or groovy plugins.")
-		}
 
-		project.dependencies {
-			runtime module(extension.wrapper) {
+		def config = project.configurations.maybeCreate("$extension.name-$locality-runtime")
+		project.dependencies.with {
+			add(config.name, module(extension.wrapper) {
 				transitive = true
-			}
+			})
 		}
-
 
 		def (String forgeVersion, String mcVersion, List<String> extraVMArgs) = wrappers[extension.wrapper.split(":")[1]]
 
@@ -54,8 +53,9 @@ class MinecraftWrapper implements Wrapper {
 		def spec = instance.getOfflineLaunchSpec("TestUser-${new Random().nextInt(100)}")
 
 		project.logging.level = logLevelBefore
+
 		new JavaLaunchContainer(
-			extraClasspath: spec.classpath,
+			extraClasspath: spec.classpath + config.resolve(),
 			launchArgs: spec.launchArgs.toList(),
 			jvmArgs: spec.jvmArgs.toList() + extraVMArgs,
 			mainClass: spec.mainClass
