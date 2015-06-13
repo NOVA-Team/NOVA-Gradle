@@ -5,6 +5,8 @@ import nova.gradle.extensions.WrapperConfigExtension
 import nova.gradle.wrappers.MinecraftWrapper
 import org.gradle.api.Project
 
+import java.nio.file.Path
+
 /**
  * @author rx14
  */
@@ -23,7 +25,10 @@ class WrapperManager {
 	static JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality) {
 		for (wrapper in wrappers) {
 			if (wrapper.canHandle(extension, locality)) {
-				return wrapper.getLaunch(project, extension, locality)
+				def instancePath = project.rootDir.toPath().resolve("run/$extension.name/$locality")
+				instancePath.toFile().mkdirs()
+
+				return wrapper.getLaunch(project, extension, locality, instancePath)
 			}
 		}
 

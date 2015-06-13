@@ -9,7 +9,7 @@ import org.gradle.api.Project
 import uk.co.rx14.jmclaunchlib.MCInstance
 import uk.co.rx14.jmclaunchlib.util.NullSupplier
 
-import java.nio.file.FileSystems
+import java.nio.file.Path
 
 class MinecraftWrapper implements Wrapper {
 
@@ -25,7 +25,7 @@ class MinecraftWrapper implements Wrapper {
 	}
 
 	@Override
-	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality) {
+	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath) {
 
 		if (!project.configurations.findByName("runtime")) {
 			throw new GradleException("Runtime configuration does not exist, make sure you have applied the java, scala or groovy plugins.")
@@ -38,9 +38,6 @@ class MinecraftWrapper implements Wrapper {
 		}
 
 		project.logger.lifecycle "Creating instance..."
-
-		def instancePath = FileSystems.default.getPath("run/$extension.name/$locality")
-		instancePath.toFile().mkdirs()
 
 		def (String forgeVersion, String mcVersion, List<String> extraVMArgs) = wrappers[extension.wrapper.split(":")[1]]
 
