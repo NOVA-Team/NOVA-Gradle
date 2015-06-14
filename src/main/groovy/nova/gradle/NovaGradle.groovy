@@ -11,13 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.JavaExec
-import org.gradle.internal.xml.XmlTransformer
-import org.gradle.plugins.ide.idea.GenerateIdeaModule
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.gradle.plugins.ide.idea.model.IdeaModule
-import org.gradle.plugins.ide.idea.model.IdeaModuleIml
-import org.gradle.plugins.ide.idea.model.PathFactory
-import org.w3c.dom.Element
 
 import java.util.regex.Pattern
 
@@ -68,7 +62,7 @@ class NovaGradle implements Plugin<Project> {
 			Locality locality = Locality.Client
 
 			def execTask = addExecTask(project, wrapper, locality)
-			addGradleRun(project, execTask.name)
+			addIdeaRun(project, execTask.name)
 		}
 	}
 
@@ -81,7 +75,7 @@ class NovaGradle implements Plugin<Project> {
 	}
 
 	@CompileStatic(TypeCheckingMode.SKIP)
-	def addGradleRun(Project project, String taskName) {
+	def addIdeaRun(Project project, String taskName) {
 		def idea = project.rootProject.extensions["idea"] as IdeaModel
 		idea.workspace.iws.withXml { XmlProvider xml ->
 			def root = xml.asNode()
