@@ -17,7 +17,6 @@ class JavaLaunchContainer {
 		def jarTask = p.tasks["jar"] as Jar
 
 		exec.classpath(p.files(extraClasspath))
-			.classpath(p.configurations["runtime"])
 			.classpath(jarTask.archivePath)
 			.jvmArgs(jvmArgs)
 			.setArgs(launchArgs)

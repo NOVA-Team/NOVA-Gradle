@@ -15,4 +15,10 @@ class WrapperConfigExtension {
 	def wrapper(String wrapper) {
 		this.wrapper = wrapper
 	}
+
+	List<Object> runtime = []
+
+	def runtime(Object runtime) {
+		this.runtime += runtime
+	}
 }

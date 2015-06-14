@@ -63,6 +63,11 @@ class NovaGradle implements Plugin<Project> {
 			Locality locality = Locality.Client
 
 			def configuration = project.configurations.maybeCreate("$wrapper.name-$locality-runtime")
+				.extendsFrom(project.configurations["runtime"])
+
+			wrapper.runtime.each {
+				project.dependencies.add(configuration.name, it)
+			}
 
 			def execTask = addExecTask(project, wrapper, locality, configuration)
 			addIdeaRun(project, execTask.name, "Run \"$wrapper.name\" $locality")
