@@ -4,6 +4,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import nova.gradle.extensions.NovaExtension
 import nova.gradle.extensions.WrapperConfigExtension
+import nova.gradle.util.FileLogListener
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -27,8 +28,21 @@ class NovaGradle implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
+		//Set up logging
+		def projectCacheDir = project.gradle.startParameter.projectCacheDir
+		if (!projectCacheDir) {
+			projectCacheDir = new File(project.projectDir, ".gradle")
+		}
+
+		def listener = new FileLogListener(new File(projectCacheDir, "gradle.log"))
+		project.logging.addStandardOutputListener(listener)
+		project.logging.addStandardErrorListener(listener)
+		project.gradle.addBuildListener(listener)
+
+		//Nova build extension
 		project.extensions.create("nova", NovaExtension, project)
 
+		//Add jcenter and NOVA repos
 		project.repositories.with {
 			add(jcenter())
 			add(maven { MavenArtifactRepository repo ->
@@ -37,14 +51,17 @@ class NovaGradle implements Plugin<Project> {
 			})
 		}
 
+		//Add afterEvaluate hook
 		project.afterEvaluate(this.&afterEvaluate)
 	}
 
 	def afterEvaluate(Project project) {
-		if (!project.configurations.findByName("runtime")) {
+		//We need the runtime config
+		if (!project.configurations["runtime"]) {
 			throw new GradleException("Runtime configuration does not exist, make sure you have applied the java, scala or groovy plugins.")
 		}
 
+		//Add tasks for each wrapper configured
 		def nova = project.extensions["nova"] as NovaExtension
 		nova.wrappers.each { WrapperConfigExtension wrapper ->
 			//TODO: Implement server locality

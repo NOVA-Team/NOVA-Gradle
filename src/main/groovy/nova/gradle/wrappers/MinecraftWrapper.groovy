@@ -17,7 +17,6 @@ class MinecraftWrapper implements Wrapper {
 	def wrappers = [
 		"NovaWrapper-MC1.7.10": ["1.7.10-10.13.4.1448-1.7.10", "1.7.10"],
 		"NovaWrapper-MC1.8"   : ["1.8-11.14.3.1446", "1.8"]
-
 	]
 
 	@Override
