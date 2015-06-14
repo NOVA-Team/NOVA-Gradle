@@ -5,19 +5,20 @@ import nova.gradle.Locality
 import nova.gradle.Wrapper
 import nova.gradle.extensions.WrapperConfigExtension
 import org.gradle.api.Project
-import org.gradle.api.logging.LogLevel
 import uk.co.rx14.jmclaunchlib.MCInstance
 import uk.co.rx14.jmclaunchlib.util.NullSupplier
 
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 
 class MinecraftWrapper implements Wrapper {
 
 	def wrappers = [
-		"NovaWrapper-MC1.7.10": ["1.7.10-10.13.4.1448-1.7.10", "1.7.10", ["-Dfml.coreMods.load=nova.wrapper.mc1710.NovaMinecraftCore"]].asImmutable(),
-		"NovaWrapper-MC1.8": ["1.8-11.14.3.1446", "1.8", ["-Dfml.coreMods.load=nova.wrapper.mc18.NovaMinecraftCore"]].asImmutable()
+		"NovaWrapper-MC1.7.10": ["1.7.10-10.13.4.1448-1.7.10", "1.7.10", ["-Dfml.coreMods.load=nova.wrapper.mc1710.NovaMinecraftCore"]],
+		"NovaWrapper-MC1.8"   : ["1.8-11.14.3.1446", "1.8", ["-Dfml.coreMods.load=nova.wrapper.mc18.NovaMinecraftCore"]]
 
-	].asImmutable()
+	]
 
 	@Override
 	boolean canHandle(WrapperConfigExtension extension, Locality locality) {
@@ -26,11 +27,22 @@ class MinecraftWrapper implements Wrapper {
 
 	@Override
 	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath) {
-		project.logger.lifecycle "Creating instance..."
+		//Get hardcoded wrapper config
+		//TODO: put config in NETA_INF on the wrapper
+		def (String forgeVersion, String mcVersion, List<String> extraVMArgs) = wrappers[extension.wrapper.split(":")[1]]
 
-		def logLevelBefore = project.logging.level
-		project.logging.level = LogLevel.INFO
+		//Create launch spec, this configures the Minecraft instance
+		def instance = MCInstance.createForge(
+			mcVersion,
+			forgeVersion,
+			instancePath,
+			project.gradle.gradleUserHomeDir.toPath().resolve("caches/minecraft"), //Cache directory
+			NullSupplier.INSTANCE //Authentication information supplier
+		)
 
+		def spec = instance.getOfflineLaunchSpec("TestUser-${new Random().nextInt(100)}")
+
+		//Resolve wrapper dependency
 		def config = project.configurations.maybeCreate("$extension.name-$locality-runtime")
 		project.dependencies.with {
 			add(config.name, module(extension.wrapper) {
@@ -38,22 +50,15 @@ class MinecraftWrapper implements Wrapper {
 			})
 		}
 
-		def (String forgeVersion, String mcVersion, List<String> extraVMArgs) = wrappers[extension.wrapper.split(":")[1]]
+		def files = config.resolve()
+		assert files.size() == 1
 
-		def instance = MCInstance.createForge(
-			mcVersion,
-			forgeVersion,
-			instancePath,
-			project.gradle.gradleUserHomeDir.toPath().resolve("caches/minecraft"),
-			NullSupplier.INSTANCE
-		)
-
-		def spec = instance.getOfflineLaunchSpec("TestUser-${new Random().nextInt(100)}")
-
-		project.logging.level = logLevelBefore
+		//Hacks ensue: put the wrapper in the mdos folder
+		def wrapperFile = instancePath.resolve("mods/NovaWrapper.jar")
+		Files.copy(files[0].toPath(), wrapperFile, StandardCopyOption.REPLACE_EXISTING)
 
 		new JavaLaunchContainer(
-			extraClasspath: spec.classpath + config.resolve(),
+			extraClasspath: spec.classpath,
 			launchArgs: spec.launchArgs.toList(),
 			jvmArgs: spec.jvmArgs.toList() + extraVMArgs,
 			mainClass: spec.mainClass
