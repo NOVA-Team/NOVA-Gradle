@@ -15,8 +15,8 @@ import java.nio.file.StandardCopyOption
 class MinecraftWrapper implements Wrapper {
 
 	def wrappers = [
-		"NovaWrapper-MC1.7.10": ["1.7.10-10.13.4.1448-1.7.10", "1.7.10", ["-Dfml.coreMods.load=nova.wrapper.mc1710.NovaMinecraftCore"]],
-		"NovaWrapper-MC1.8"   : ["1.8-11.14.3.1446", "1.8", ["-Dfml.coreMods.load=nova.wrapper.mc18.NovaMinecraftCore"]]
+		"NovaWrapper-MC1.7.10": ["1.7.10-10.13.4.1448-1.7.10", "1.7.10"],
+		"NovaWrapper-MC1.8"   : ["1.8-11.14.3.1446", "1.8"]
 
 	]
 
@@ -28,8 +28,8 @@ class MinecraftWrapper implements Wrapper {
 	@Override
 	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath) {
 		//Get hardcoded wrapper config
-		//TODO: put config in NETA_INF on the wrapper
-		def (String forgeVersion, String mcVersion, List<String> extraVMArgs) = wrappers[extension.wrapper.split(":")[1]]
+		//TODO: put forge and MC version in META_INF on the wrapper
+		def (String forgeVersion, String mcVersion) = wrappers[extension.wrapper.split(":")[1]]
 
 		//Create launch spec, this configures the Minecraft instance
 		def instance = MCInstance.createForge(
@@ -60,7 +60,7 @@ class MinecraftWrapper implements Wrapper {
 		new JavaLaunchContainer(
 			extraClasspath: spec.classpath,
 			launchArgs: spec.launchArgs.toList(),
-			jvmArgs: spec.jvmArgs.toList() + extraVMArgs,
+			jvmArgs: spec.jvmArgs.toList(),
 			mainClass: spec.mainClass
 		)
 	}
