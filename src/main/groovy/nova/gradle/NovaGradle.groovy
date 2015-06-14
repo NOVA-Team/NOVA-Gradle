@@ -9,6 +9,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.JavaExec
 import org.gradle.plugins.ide.idea.model.IdeaModel
@@ -61,15 +62,17 @@ class NovaGradle implements Plugin<Project> {
 			//TODO: Implement server locality
 			Locality locality = Locality.Client
 
-			def execTask = addExecTask(project, wrapper, locality)
+			def configuration = project.configurations.maybeCreate("$wrapper.name-$locality-runtime")
+
+			def execTask = addExecTask(project, wrapper, locality, configuration)
 			addIdeaRun(project, execTask.name)
 		}
 	}
 
-	JavaExec addExecTask(Project project, WrapperConfigExtension wrapper, Locality locality) {
+	JavaExec addExecTask(Project project, WrapperConfigExtension wrapper, Locality locality, Configuration config) {
 		project.tasks.create("run$wrapper.name$locality", JavaExec).doFirst { JavaExec task ->
 			WrapperManager
-				.getLaunch(project, wrapper, locality)
+				.getLaunch(project, wrapper, locality, config)
 				.configureJavaExec(project, task)
 		}.dependsOn(project.tasks["jar"]) as JavaExec
 	}

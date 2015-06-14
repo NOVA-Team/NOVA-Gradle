@@ -3,6 +3,7 @@ package nova.gradle
 import groovy.transform.CompileStatic
 import nova.gradle.extensions.WrapperConfigExtension
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 
 import java.nio.file.Path
 
@@ -10,5 +11,5 @@ import java.nio.file.Path
 interface Wrapper {
 	boolean canHandle(WrapperConfigExtension extension, Locality locality);
 
-	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath);
+	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath, Configuration config);
 }

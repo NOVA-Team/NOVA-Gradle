@@ -4,6 +4,7 @@ import groovy.transform.CompileStatic
 import nova.gradle.extensions.WrapperConfigExtension
 import nova.gradle.wrappers.MinecraftWrapper
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 
 /**
  * @author rx14
@@ -20,13 +21,13 @@ class WrapperManager {
 		wrappers.add(w)
 	}
 
-	static JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality) {
+	static JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Configuration config) {
 		for (wrapper in wrappers) {
 			if (wrapper.canHandle(extension, locality)) {
 				def instancePath = project.rootDir.toPath().resolve("run/$extension.name/$locality")
 				instancePath.toFile().mkdirs()
 
-				return wrapper.getLaunch(project, extension, locality, instancePath)
+				return wrapper.getLaunch(project, extension, locality, instancePath, config)
 			}
 		}
 

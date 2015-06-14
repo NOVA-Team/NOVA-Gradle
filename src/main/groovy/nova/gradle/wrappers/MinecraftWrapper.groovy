@@ -5,6 +5,7 @@ import nova.gradle.Locality
 import nova.gradle.Wrapper
 import nova.gradle.extensions.WrapperConfigExtension
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import uk.co.rx14.jmclaunchlib.MCInstance
 import uk.co.rx14.jmclaunchlib.util.NullSupplier
 
@@ -25,7 +26,7 @@ class MinecraftWrapper implements Wrapper {
 	}
 
 	@Override
-	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath) {
+	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath, Configuration config) {
 		//Get hardcoded wrapper config
 		//TODO: put forge and MC version in META_INF on the wrapper
 		def (String forgeVersion, String mcVersion) = wrappers[extension.wrapper.split(":")[1]]
@@ -42,7 +43,6 @@ class MinecraftWrapper implements Wrapper {
 		def spec = instance.getOfflineLaunchSpec("TestUser-${new Random().nextInt(100)}")
 
 		//Resolve wrapper dependency
-		def config = project.configurations.maybeCreate("$extension.name-$locality-runtime")
 		project.dependencies.with {
 			add(config.name, module(extension.wrapper) {
 				transitive = true
