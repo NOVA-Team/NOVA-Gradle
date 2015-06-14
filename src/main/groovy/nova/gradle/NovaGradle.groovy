@@ -67,7 +67,8 @@ class NovaGradle implements Plugin<Project> {
 			//TODO: Implement server locality
 			Locality locality = Locality.Client
 
-			addExecTask(project, wrapper, locality)
+			def execTask = addExecTask(project, wrapper, locality)
+			addGradleRun(project, execTask.name)
 		}
 	}
 
@@ -77,5 +78,29 @@ class NovaGradle implements Plugin<Project> {
 				.getLaunch(project, wrapper, locality)
 				.configureJavaExec(project, task)
 		}.dependsOn(project.tasks["jar"]) as JavaExec
+	}
+
+	@CompileStatic(TypeCheckingMode.SKIP)
+	def addGradleRun(Project project, String taskName) {
+		def idea = project.rootProject.extensions["idea"] as IdeaModel
+		idea.workspace.iws.withXml { XmlProvider xml ->
+			def root = xml.asNode()
+			def runManager = root.component.find { it.@name == "RunManager"} as Node
+
+			if(runManager.configuration.find { it.@type == "GradleRunConfiguration" && it.@name == taskName }) {
+				//Already exists
+				return
+			}
+
+			def relPath = project.rootProject.projectDir.toPath().relativize(project.projectDir.toPath())
+
+			runManager.appendNode("configuration", [default: false, name: taskName, type: "GradleRunConfiguration", factoryName: "Gradle"])
+				.appendNode("ExternalSystemSettings")
+					.appendNode("option", [name: "externalProjectPath", value: "\$PROJECT_DIR\$/${relPath}build.gradle"]).parent()
+					.appendNode("option", [name: "externalSystemIdString", value: "GRADLE"]).parent()
+					.appendNode("option", [name: "taskNames"])
+						.appendNode("list")
+							.appendNode("option", [value: taskName])
+		}
 	}
 }
