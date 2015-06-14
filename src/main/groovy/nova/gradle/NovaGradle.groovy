@@ -65,7 +65,7 @@ class NovaGradle implements Plugin<Project> {
 			def configuration = project.configurations.maybeCreate("$wrapper.name-$locality-runtime")
 
 			def execTask = addExecTask(project, wrapper, locality, configuration)
-			addIdeaRun(project, execTask.name)
+			addIdeaRun(project, execTask.name, "Run \"$wrapper.name\" $locality")
 		}
 	}
 
@@ -78,20 +78,20 @@ class NovaGradle implements Plugin<Project> {
 	}
 
 	@CompileStatic(TypeCheckingMode.SKIP)
-	def addIdeaRun(Project project, String taskName) {
+	def addIdeaRun(Project project, String taskName, String runName) {
 		def idea = project.rootProject.extensions["idea"] as IdeaModel
 		idea.workspace.iws.withXml { XmlProvider xml ->
 			def root = xml.asNode()
 			def runManager = root.component.find { it.@name == "RunManager"} as Node
 
-			if(runManager.configuration.find { it.@type == "GradleRunConfiguration" && it.@name == taskName }) {
+			if(runManager.configuration.find { it.@type == "GradleRunConfiguration" && it.@name == runName }) {
 				//Already exists
 				return
 			}
 
 			def relPath = project.rootProject.projectDir.toPath().relativize(project.projectDir.toPath())
 
-			runManager.appendNode("configuration", [default: false, name: taskName, type: "GradleRunConfiguration", factoryName: "Gradle"])
+			runManager.appendNode("configuration", [default: false, name: runName, type: "GradleRunConfiguration", factoryName: "Gradle"])
 				.appendNode("ExternalSystemSettings")
 					.appendNode("option", [name: "externalProjectPath", value: "\$PROJECT_DIR\$/${relPath}build.gradle"]).parent()
 					.appendNode("option", [name: "externalSystemIdString", value: "GRADLE"]).parent()
