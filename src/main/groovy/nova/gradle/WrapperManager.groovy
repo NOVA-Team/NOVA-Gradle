@@ -5,8 +5,6 @@ import nova.gradle.extensions.WrapperConfigExtension
 import nova.gradle.wrappers.MinecraftWrapper
 import org.gradle.api.Project
 
-import java.nio.file.Path
-
 /**
  * @author rx14
  */

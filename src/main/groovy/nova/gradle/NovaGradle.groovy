@@ -1,5 +1,7 @@
 package nova.gradle
 
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import nova.gradle.extensions.NovaExtension
 import nova.gradle.extensions.WrapperConfigExtension
 import org.gradle.api.GradleException
@@ -17,11 +19,13 @@ import org.w3c.dom.Element
 
 import java.util.regex.Pattern
 
+@CompileStatic
 class NovaGradle implements Plugin<Project> {
 
 	Pattern taskPattern = Pattern.compile("run(.+)(Server|Client)")
 
 	@Override
+	@CompileStatic(TypeCheckingMode.SKIP)
 	void apply(Project project) {
 		project.extensions.create("nova", NovaExtension, project)
 
@@ -44,7 +48,8 @@ class NovaGradle implements Plugin<Project> {
 		def idea = project.rootProject.extensions["idea"] as IdeaModel
 		List<GenerateIdeaModule> tasks = []
 
-		project.nova.wrappers.each { WrapperConfigExtension wrapper ->
+		def nova = project.extensions["nova"] as NovaExtension
+		nova.wrappers.each { WrapperConfigExtension wrapper ->
 			//TODO: Implement server locality
 			Locality locality = Locality.Client
 
@@ -81,7 +86,7 @@ class NovaGradle implements Plugin<Project> {
 			pathFactory = new PathFactory()
 			contentRoot = instancePath.toFile()
 			name = "$wrapper.name-$locality"
-			scopes += [RUNTIME: [plus: [config]]]
+			scopes += [RUNTIME: [plus: [config]]] as Map
 		}
 
 		idea.doFirst {
@@ -93,6 +98,6 @@ class NovaGradle implements Plugin<Project> {
 	}
 
 	def generateIdeaRunconfig(Element project, WrapperConfigExtension extension, Locality locality) {
-		project.getElementsByTagName("component").find { it.getAttribute(a) }
+//		project.getElementsByTagName("component").find { it.getAttribute(a) }
 	}
 }

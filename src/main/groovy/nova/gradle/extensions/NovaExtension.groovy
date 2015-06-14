@@ -1,7 +1,7 @@
-package nova.gradle.extensions;
+package nova.gradle.extensions
 
-import org.gradle.api.NamedDomainObjectContainer;
-import org.gradle.api.Project;
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.Project
 
 public class NovaExtension {
 

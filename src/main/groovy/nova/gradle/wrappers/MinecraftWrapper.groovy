@@ -4,9 +4,7 @@ import nova.gradle.JavaLaunchContainer
 import nova.gradle.Locality
 import nova.gradle.Wrapper
 import nova.gradle.extensions.WrapperConfigExtension
-import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.logging.LogLevel
 import uk.co.rx14.jmclaunchlib.MCInstance
 import uk.co.rx14.jmclaunchlib.util.NullSupplier
