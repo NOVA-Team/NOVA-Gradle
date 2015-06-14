@@ -45,24 +45,13 @@ class NovaGradle implements Plugin<Project> {
 			throw new GradleException("Runtime configuration does not exist, make sure you have applied the java, scala or groovy plugins.")
 		}
 
-		def idea = project.rootProject.extensions["idea"] as IdeaModel
-		List<GenerateIdeaModule> tasks = []
-
 		def nova = project.extensions["nova"] as NovaExtension
 		nova.wrappers.each { WrapperConfigExtension wrapper ->
 			//TODO: Implement server locality
 			Locality locality = Locality.Client
 
 			addExecTask(project, wrapper, locality)
-			tasks << addIdeaModuleTask(project, wrapper, locality)
-
-			idea.project.ipr.withXml { XmlProvider xml ->
-				generateIdeaRunconfig(xml.asElement(), wrapper, locality)
-			}
 		}
-
-		idea.project.modules += tasks.collect { it.module }
-		project.tasks["idea"].dependsOn(tasks)
 	}
 
 	JavaExec addExecTask(Project project, WrapperConfigExtension wrapper, Locality locality) {
@@ -71,33 +60,5 @@ class NovaGradle implements Plugin<Project> {
 				.getLaunch(project, wrapper, locality)
 				.configureJavaExec(project, task)
 		}.dependsOn(project.tasks["jar"]) as JavaExec
-	}
-
-	GenerateIdeaModule addIdeaModuleTask(Project project, WrapperConfigExtension wrapper, Locality locality) {
-		def instancePath = project.rootDir.toPath().resolve("run/$wrapper.name/$locality/")
-
-		def config = project.configurations.maybeCreate("$wrapper.name-$locality-runtime-idea").extendsFrom(project.configurations["runtime"])
-		project.dependencies.add(config.name, project)
-
-		def idea = project.tasks.create("create${wrapper.name}${locality}Module", GenerateIdeaModule)
-
-		idea.module = new IdeaModule(project, new IdeaModuleIml(new XmlTransformer(), instancePath.toFile()))
-		idea.module.with {
-			pathFactory = new PathFactory()
-			contentRoot = instancePath.toFile()
-			name = "$wrapper.name-$locality"
-			scopes += [RUNTIME: [plus: [config]]] as Map
-		}
-
-		idea.doFirst {
-			def launch = WrapperManager.getLaunch(project, wrapper, locality)
-			project.dependencies.add(config.name, project.files(launch.extraClasspath))
-		}
-
-		idea
-	}
-
-	def generateIdeaRunconfig(Element project, WrapperConfigExtension extension, Locality locality) {
-//		project.getElementsByTagName("component").find { it.getAttribute(a) }
 	}
 }
