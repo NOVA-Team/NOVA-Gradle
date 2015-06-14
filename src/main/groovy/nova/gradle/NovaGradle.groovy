@@ -8,6 +8,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.JavaExec
 import org.gradle.internal.xml.XmlTransformer
 import org.gradle.plugins.ide.idea.GenerateIdeaModule
@@ -25,16 +26,15 @@ class NovaGradle implements Plugin<Project> {
 	Pattern taskPattern = Pattern.compile("run(.+)(Server|Client)")
 
 	@Override
-	@CompileStatic(TypeCheckingMode.SKIP)
 	void apply(Project project) {
 		project.extensions.create("nova", NovaExtension, project)
 
-		project.repositories {
-			jcenter()
-			maven {
-				name = "NovaAPI"
-				url = "http://maven.novaapi.net/"
-			}
+		project.repositories.with {
+			add(jcenter())
+			add(maven { MavenArtifactRepository repo ->
+				repo.name = "NovaAPI"
+				repo.url = "http://maven.novaapi.net/"
+			})
 		}
 
 		project.afterEvaluate(this.&afterEvaluate)
