@@ -54,6 +54,7 @@ class MinecraftWrapper implements Wrapper {
 
 		//Hacks ensue: put the wrapper in the mdos folder
 		def wrapperFile = instancePath.resolve("mods/NovaWrapper.jar")
+		wrapperFile.toFile().parentFile.mkdirs()
 		Files.copy(files[0].toPath(), wrapperFile, StandardCopyOption.REPLACE_EXISTING)
 
 		new JavaLaunchContainer(
