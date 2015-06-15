@@ -70,6 +70,7 @@ class NovaGradle implements Plugin<Project> {
 			}
 
 			def execTask = addExecTask(project, wrapper, locality, configuration)
+			execTask.group = "NOVA Wrapper"
 			addIdeaRun(project, execTask.name, "Run \"$wrapper.name\" $locality")
 		}
 	}
