@@ -29,7 +29,8 @@ class MinecraftWrapper implements Wrapper {
 	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath, Configuration config) {
 		//Get hardcoded wrapper config
 		//TODO: put forge and MC version in META_INF on the wrapper
-		def (String forgeVersion, String mcVersion) = wrappers[extension.wrapper.split(":")[1]]
+		def wrapperName = extension.wrapper.split(":")[1]
+		def (String forgeVersion, String mcVersion) = wrappers[wrapperName]
 
 		//Create launch spec, this configures the Minecraft instance
 		def instance = MCInstance.createForge(
@@ -43,13 +44,14 @@ class MinecraftWrapper implements Wrapper {
 		def spec = instance.getOfflineLaunchSpec("TestUser-${new Random().nextInt(100)}")
 
 		//Resolve wrapper dependency
+		def wrapperConfig = project.configurations.maybeCreate("novawrapper-$wrapperName")
 		project.dependencies.with {
-			add(config.name, module(extension.wrapper) {
+			add(wrapperConfig.name, module(extension.wrapper) {
 				transitive = true
 			})
 		}
 
-		def files = config.resolve()
+		def files = wrapperConfig.resolve()
 		assert files.size() == 1
 
 		//Hacks ensue: put the wrapper in the mdos folder
