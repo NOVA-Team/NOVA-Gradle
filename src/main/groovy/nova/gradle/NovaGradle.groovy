@@ -80,6 +80,7 @@ class NovaGradle implements Plugin<Project> {
 			WrapperManager
 				.getLaunch(project, wrapper, locality, config)
 				.configureJavaExec(project, task)
+				.classpath(config)
 		}.dependsOn(project.tasks["jar"]) as JavaExec
 	}
 
