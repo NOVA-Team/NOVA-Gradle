@@ -33,6 +33,9 @@ class NovaGradle implements Plugin<Project> {
 		def projectCacheDir = project.gradle.startParameter.projectCacheDir ?: new File(project.projectDir, ".gradle")
 		FileLogListener.setup(project, new File(projectCacheDir, "gradle.log"))
 
+		//Add IDEA plugin
+		project.apply(plugin: "idea")
+
 		//Nova build extension
 		project.extensions.create("nova", NovaExtension, project)
 
@@ -86,6 +89,8 @@ class NovaGradle implements Plugin<Project> {
 	@CompileStatic(TypeCheckingMode.SKIP)
 	def addIdeaRun(Project project, String taskName, String runName) {
 		def idea = project.rootProject.extensions["idea"] as IdeaModel
+		if (!idea) return //Return if idea is null
+
 		idea.workspace.iws.withXml { XmlProvider xml ->
 			def root = xml.asNode()
 			def runManager = root.component.find { it.@name == "RunManager"} as Node
