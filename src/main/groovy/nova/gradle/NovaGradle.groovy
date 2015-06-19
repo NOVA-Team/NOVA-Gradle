@@ -78,12 +78,17 @@ class NovaGradle implements Plugin<Project> {
 	}
 
 	JavaExec addExecTask(Project project, WrapperConfigExtension wrapper, Locality locality, Configuration config) {
-		project.tasks.create("run$wrapper.name$locality", JavaExec).doFirst { JavaExec task ->
+		def task = project.tasks.create("run$wrapper.name$locality", JavaExec).doFirst { JavaExec task ->
 			WrapperManager
 				.getLaunch(project, wrapper, locality, config)
 				.configureJavaExec(project, task)
 				.classpath(config)
-		}.dependsOn(project.tasks["jar"]) as JavaExec
+		} as JavaExec
+		task.dependsOn(project.tasks["jar"])
+
+		def runDir = new File(project.rootDir, "run/$wrapper.name/$locality")
+		runDir.mkdirs()
+		task.workingDir(runDir)
 	}
 
 	@CompileStatic(TypeCheckingMode.SKIP)
