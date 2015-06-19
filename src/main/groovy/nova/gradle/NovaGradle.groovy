@@ -23,16 +23,15 @@ class NovaGradle implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
-		//Set up logging
-		def projectCacheDir = project.gradle.startParameter.projectCacheDir
-		if (!projectCacheDir) {
-			projectCacheDir = new File(project.projectDir, ".gradle")
+		//Java check
+		def javaversion = Integer.parseInt(System.getProperty("java.runtime.version").split("\\.")[1])
+		if (javaversion < 8) {
+			throw new GradleException("Please use JDK 8 or above! If this message persists make sure to install all other JDKs.")
 		}
 
-		def listener = new FileLogListener(new File(projectCacheDir, "gradle.log"))
-		project.logging.addStandardOutputListener(listener)
-		project.logging.addStandardErrorListener(listener)
-		project.gradle.addBuildListener(listener)
+		//Set up logging
+		def projectCacheDir = project.gradle.startParameter.projectCacheDir ?: new File(project.projectDir, ".gradle")
+		FileLogListener.setup(project, new File(projectCacheDir, "gradle.log"))
 
 		//Nova build extension
 		project.extensions.create("nova", NovaExtension, project)

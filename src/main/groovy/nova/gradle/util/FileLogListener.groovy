@@ -3,6 +3,7 @@ package nova.gradle.util
 import groovy.transform.CompileStatic
 import org.gradle.BuildListener
 import org.gradle.BuildResult
+import org.gradle.api.Project
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.StandardOutputListener
@@ -19,6 +20,14 @@ class FileLogListener implements StandardOutputListener, BuildListener {
 		}
 
 		this.out = out.newWriter()
+	}
+
+	static setup(Project project, File output) {
+		def listener = new FileLogListener(output)
+
+		project.logging.addStandardOutputListener(listener)
+		project.logging.addStandardErrorListener(listener)
+		project.gradle.addBuildListener(listener)
 	}
 
 	@Override
