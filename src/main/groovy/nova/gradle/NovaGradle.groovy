@@ -58,6 +58,12 @@ class NovaGradle implements Plugin<Project> {
 			throw new GradleException("Runtime configuration does not exist, make sure you have applied the java, scala or groovy plugins.")
 		}
 
+		//Add message to eclipse class
+		project.tasks["eclipse"] << {
+			project.logger.warn "Eclipse run/debug configuration is not supported, view the NovaGradle docs for information on running and debugging mods in eclipse."
+			project.logger.warn "NovaGradle docs are available at http://novaapi.net/docs/Mod%20Development/NOVA%20Gradle/"
+		}
+
 		//Add tasks for each wrapper configured
 		def nova = project.extensions["nova"] as NovaExtension
 		nova.wrappers.each { WrapperConfigExtension wrapper ->
