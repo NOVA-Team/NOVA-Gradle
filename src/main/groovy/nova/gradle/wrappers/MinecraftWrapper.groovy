@@ -4,6 +4,7 @@ import nova.gradle.JavaLaunchContainer
 import nova.gradle.Locality
 import nova.gradle.Wrapper
 import nova.gradle.extensions.WrapperConfigExtension
+import nova.gradle.util.GradleLogHandler
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import uk.co.rx14.jmclaunchlib.MCInstance
@@ -12,6 +13,8 @@ import uk.co.rx14.jmclaunchlib.util.NullSupplier
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import java.util.logging.Level
+import java.util.logging.Logger
 
 class MinecraftWrapper implements Wrapper {
 
@@ -27,6 +30,12 @@ class MinecraftWrapper implements Wrapper {
 
 	@Override
 	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath, Configuration config) {
+		//Setup logging for jMCLaunchLib
+		def logger = Logger.getLogger("uk.co.rx14.jmclaunchlib")
+		logger.addHandler(new GradleLogHandler(project.logger, GradleLogHandler.infoMappings))
+		logger.useParentHandlers = false
+		logger.setLevel(Level.ALL)
+
 		//Get hardcoded wrapper config
 		//TODO: put forge and MC version in META_INF on the wrapper
 		def wrapperName = extension.wrapper.split(":")[1]
