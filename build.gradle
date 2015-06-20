@@ -11,7 +11,7 @@ repositories {
 dependencies {
 	compile gradleApi()
 	compile "org.codehaus.groovy:groovy-all:2.4.3"
-	compile "uk.co.rx14.jmclaunchlib:jMCLaunchLib:0.2.2"
+	compile "uk.co.rx14.jmclaunchlib:jMCLaunchLib:0.2.3"
 }
 
 publishing {
