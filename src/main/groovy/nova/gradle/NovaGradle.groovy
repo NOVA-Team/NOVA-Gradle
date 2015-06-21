@@ -8,6 +8,7 @@ import nova.gradle.util.FileLogListener
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
@@ -59,9 +60,12 @@ class NovaGradle implements Plugin<Project> {
 		}
 
 		//Add message to eclipse class
-		project.tasks["eclipse"] << {
-			project.logger.warn "Eclipse run/debug configuration is not supported, view the NovaGradle docs for information on running and debugging mods in eclipse."
-			project.logger.warn "NovaGradle docs are available at http://novaapi.net/docs/Mod%20Development/NOVA%20Gradle/"
+		def eclipse = project.tasks.findByName("eclipse")
+		if (eclipse) {
+			eclipse.doFirst {
+				project.logger.warn "Eclipse run/debug configuration is not supported, view the NovaGradle docs for information on running and debugging mods in eclipse."
+				project.logger.warn "NovaGradle docs are available at http://novaapi.net/docs/Mod%20Development/NOVA%20Gradle/"
+			}
 		}
 
 		//Add tasks for each wrapper configured
