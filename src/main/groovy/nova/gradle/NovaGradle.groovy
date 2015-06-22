@@ -59,12 +59,9 @@ class NovaGradle implements Plugin<Project> {
 		}
 
 		//Add message to eclipse class
-		def eclipse = project.tasks.findByName("eclipse")
-		if (eclipse) {
-			eclipse.doFirst {
-				project.logger.warn "Eclipse run/debug configuration is not supported, view the NovaGradle docs for information on running and debugging mods in eclipse."
-				project.logger.warn "NovaGradle docs are available at http://novaapi.net/docs/Mod%20Development/NOVA%20Gradle/"
-			}
+		project.tasks.maybeCreate("eclipse").doFirst {
+			project.logger.warn "Creating Eclipse run/debug configurations is not supported, view the NovaGradle docs for information on running and debugging mods in eclipse."
+			project.logger.warn "NovaGradle docs are available at http://novaapi.net/docs/Mod%20Development/NOVA%20Gradle/"
 		}
 
 		//Add tasks for each wrapper configured
