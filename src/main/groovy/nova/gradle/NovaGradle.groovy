@@ -10,6 +10,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.JavaExec
 import org.gradle.plugins.ide.idea.model.IdeaModel
@@ -35,6 +36,14 @@ class NovaGradle implements Plugin<Project> {
 
 		//Add IDEA plugin
 		project.apply(plugin: "idea")
+
+		//Export function to write to set NOVA dependencies
+		project.extensions.extraProperties.set("novaApi", { String version ->
+			{ DependencyHandler handler ->
+				handler.add("compile", "nova.core:NovaCore:$version:api")
+				handler.add("runtime", "nova.core:NovaCore:$version")
+			}
+		})
 
 		//Nova build extension
 		project.extensions.create("nova", NovaExtension, project)
