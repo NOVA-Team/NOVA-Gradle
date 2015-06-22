@@ -8,7 +8,6 @@ import nova.gradle.util.FileLogListener
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
@@ -55,7 +54,7 @@ class NovaGradle implements Plugin<Project> {
 
 	def afterEvaluate(Project project) {
 		//We need the runtime config
-		if (!project.configurations["runtime"]) {
+		if (!project.configurations.findByName("runtime")) {
 			throw new GradleException("Runtime configuration does not exist, make sure you have applied the java, scala or groovy plugins.")
 		}
 
