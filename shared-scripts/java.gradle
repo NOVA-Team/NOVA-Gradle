@@ -16,9 +16,8 @@ dependencies {
 	testCompile "org.mockito:mockito-core:1.+"
 }
 
-task sourceJar(type: Jar) {
-	from sourceSets.main.java
-	from sourceSets.main.resources
+task sourcesJar(type: Jar, dependsOn: classes) {
+	from sourceSets.main.allSource
 	classifier = "sources"
 }
 
@@ -29,7 +28,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 artifacts {
 	archives jar
-	archives sourceJar
+	archives sourcesJar
 	archives javadocJar
 }
 
