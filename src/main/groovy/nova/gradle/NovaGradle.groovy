@@ -10,6 +10,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.JavaExec
@@ -37,13 +38,8 @@ class NovaGradle implements Plugin<Project> {
 		//Add IDEA plugin
 		project.apply(plugin: "idea")
 
-		//Export function to write to set NOVA dependencies
-		project.extensions.extraProperties.set("novaApi", { String version ->
-			{ DependencyHandler handler ->
-				handler.add("compile", "nova.core:NovaCore:$version:api")
-				handler.add("runtime", "nova.core:NovaCore:$version")
-			}
-		})
+		//Mixin to add dependencies { compile nova("0.1.0-SNAPSHOT") }
+		DependencyHandler.mixin DependencyHandlerMixin
 
 		//Nova build extension
 		project.extensions.create("nova", NovaExtension, project)
@@ -129,6 +125,13 @@ class NovaGradle implements Plugin<Project> {
 					.appendNode("option", [name: "taskNames"])
 						.appendNode("list")
 							.appendNode("option", [value: taskName])
+		}
+	}
+
+	static class DependencyHandlerMixin {
+		static Dependency nova(DependencyHandler self, String version) {
+			self.add("runtime", "nova.core:NovaCore:$version")
+			self.create("nova.core:NovaCore:$version:api")
 		}
 	}
 }

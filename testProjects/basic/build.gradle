@@ -15,7 +15,9 @@ repositories {
         mavenLocal()
 }
 
-dependencies novaApi("0.1.0-SNAPSHOT")
+dependencies {
+	compile nova("0.1.0-SNAPSHOT")
+}
 
 nova {
 	wrappers {
