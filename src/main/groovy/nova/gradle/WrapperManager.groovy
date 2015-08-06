@@ -21,17 +21,17 @@ class WrapperManager {
 		wrappers.add(w)
 	}
 
-	static JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Configuration config) {
-		for (wrapper in wrappers) {
-			if (wrapper.canHandle(extension, locality)) {
-				def instancePath = project.rootDir.toPath().resolve("run/$extension.name/$locality")
-				instancePath.toFile().mkdirs()
+	static Wrapper getWrapper(WrapperConfigExtension wrapperConfig, Locality locality) {
+		wrappers.find { it.canHandle(wrapperConfig, locality) }
+	}
 
-				return wrapper.getLaunch(project, extension, locality, instancePath, config)
-			}
-		}
+	static JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension wrapperConfig, Locality locality, Configuration config) {
+		def instancePath = project.rootDir.toPath().resolve("run/$wrapperConfig.name/$locality")
+		instancePath.toFile().mkdirs()
 
-		throw new WrapperNotFoundException("Could not find wrapper for $extension $locality")
+		return getWrapper(wrapperConfig, locality).getLaunch(project, wrapperConfig, locality, instancePath, config)
+
+		throw new WrapperNotFoundException("Could not find wrapper for $wrapperConfig $locality")
 	}
 
 	public static class WrapperNotFoundException extends RuntimeException {
