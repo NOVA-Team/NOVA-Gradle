@@ -4,17 +4,22 @@ import nova.gradle.JavaLaunchContainer
 import nova.gradle.Locality
 import nova.gradle.Wrapper
 import nova.gradle.extensions.WrapperConfigExtension
-import nova.gradle.util.GradleLogHandler
+import nova.gradle.util.GradleCommonsLog
+import org.apache.commons.logging.Log
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import uk.co.rx14.jmclaunchlib.MCInstance
-import uk.co.rx14.jmclaunchlib.util.NullSupplier
+import org.gradle.api.logging.Logging
+import org.reflections.Reflections
+import org.reflections.scanners.SubTypesScanner
+import uk.co.rx14.jmclaunchlib.LaunchTaskBuilder
 
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
-import java.util.logging.Level
-import java.util.logging.Logger
+
+import static org.reflections.ReflectionUtils.*
 
 class MinecraftWrapper implements Wrapper {
 
@@ -30,28 +35,36 @@ class MinecraftWrapper implements Wrapper {
 
 	@Override
 	JavaLaunchContainer getLaunch(Project project, WrapperConfigExtension extension, Locality locality, Path instancePath, Configuration config) {
-		//Setup logging for jMCLaunchLib
-		def logger = Logger.getLogger("uk.co.rx14.jmclaunchlib")
-		logger.addHandler(new GradleLogHandler(project.logger, GradleLogHandler.infoMappings))
-		logger.useParentHandlers = false
-		logger.setLevel(Level.ALL)
 
-		//Get hardcoded wrapper config
-		//TODO: put forge and MC version in META_INF on the wrapper
+		setLogging()
+
+		//TODO: put forge and MC version in META-INF on the wrapper
 		def wrapperName = extension.wrapper.split(":")[1]
+
+		installWrapper(project, wrapperName, extension, instancePath)
+
 		def (String forgeVersion, String mcVersion) = wrappers[wrapperName]
 
-		//Create launch spec, this configures the Minecraft instance
-		def instance = MCInstance.createForge(
-			mcVersion,
-			forgeVersion,
-			instancePath,
-			project.gradle.gradleUserHomeDir.toPath().resolve("caches/minecraft"), //Cache directory
-			NullSupplier.INSTANCE //Authentication information supplier
+		def task = new LaunchTaskBuilder()
+			.setNetOffline(project.gradle.startParameter.offline)
+			.setCachesDir(project.gradle.gradleUserHomeDir.toPath().resolve("caches/minecraft"))
+			.setInstanceDir(instancePath)
+			.setForgeVersion(mcVersion, forgeVersion)
+			.setOffline()
+			.setUsername("TestUser-${new Random().nextInt(100)}")
+			.build()
+
+		def spec = task.spec
+
+		new JavaLaunchContainer(
+			extraClasspath: spec.classpath,
+			launchArgs: spec.launchArgs.toList(),
+			jvmArgs: spec.jvmArgs.toList(),
+			mainClass: spec.mainClass
 		)
+	}
 
-		def spec = instance.getOfflineLaunchSpec("TestUser-${new Random().nextInt(100)}")
-
+	private void installWrapper(Project project, String wrapperName, WrapperConfigExtension extension, Path instancePath) {
 		//Resolve wrapper dependency
 		def wrapperConfig = project.configurations.maybeCreate("novawrapper-$wrapperName")
 		project.dependencies.with {
@@ -67,12 +80,22 @@ class MinecraftWrapper implements Wrapper {
 		def wrapperFile = instancePath.resolve("mods/NovaWrapper.jar")
 		wrapperFile.toFile().parentFile.mkdirs()
 		Files.copy(files[0].toPath(), wrapperFile, StandardCopyOption.REPLACE_EXISTING)
-
-		new JavaLaunchContainer(
-			extraClasspath: spec.classpath,
-			launchArgs: spec.launchArgs.toList(),
-			jvmArgs: spec.jvmArgs.toList(),
-			mainClass: spec.mainClass
-		)
 	}
+
+	private void setLogging() {
+		new Reflections("uk.co.rx14.jmclaunchlib", new SubTypesScanner(false))
+			.getSubTypesOf(Object)
+			.collect { getAllFields(it, withType(Log), withModifier(Modifier.STATIC)) }
+			.flatten()
+			.each { Field field ->
+				field.setAccessible(true)
+
+				def modifiers = field.class.getDeclaredField("modifiers")
+				modifiers.setAccessible(true)
+				modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL)
+
+				field.set(null, (Log) new GradleCommonsLog(logger: Logging.getLogger(field.class)))
+			}
+	}
+
 }
