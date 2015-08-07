@@ -84,7 +84,7 @@ class NovaGradle implements Plugin<Project> {
 
 			def execTask = addExecTask(project, wrapper, locality, configuration)
 			execTask.group = "NOVA Wrapper"
-			addIdeaRun(project, execTask.name, "Run \"$wrapper.name\" $locality")
+			addIdeaRun(project, execTask.path, "Run \"$wrapper.name\" $locality")
 		}
 	}
 
@@ -100,6 +100,8 @@ class NovaGradle implements Plugin<Project> {
 		def runDir = new File(project.rootDir, "run/$wrapper.name/$locality")
 		runDir.mkdirs()
 		task.workingDir(runDir)
+
+		task
 	}
 
 	@CompileStatic(TypeCheckingMode.SKIP)
