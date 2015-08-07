@@ -2,6 +2,7 @@ plugins {
 	id "groovy"
 	id "com.gradle.plugin-publish" version "0.9.0"
 	id "maven-publish"
+	id "net.researchgate.release" version "2.1.2"
 }
 
 repositories {
@@ -37,3 +38,5 @@ pluginBundle {
 		}
 	}
 }
+
+afterReleaseBuild.dependsOn publishPlugins
