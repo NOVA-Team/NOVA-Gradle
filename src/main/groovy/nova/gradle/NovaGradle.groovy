@@ -132,8 +132,8 @@ class NovaGradle implements Plugin<Project> {
 
 	static class DependencyHandlerMixin {
 		static Dependency nova(DependencyHandler self, String version) {
-			self.add("runtime", "nova.core:NovaCore:$version")
-			self.create("nova.core:NovaCore:$version:api")
+			self.add("runtime", "nova.core:NOVA-Core:$version")
+			self.create("nova.core:NOVA-Core:$version:api")
 		}
 	}
 }
