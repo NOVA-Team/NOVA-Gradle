@@ -37,6 +37,7 @@ class NovaGradle implements Plugin<Project> {
 
 		//Add IDEA plugin
 		project.apply(plugin: "idea")
+		project.apply(plugin: "eclipse")
 
 		//Mixin to add dependencies { compile nova("0.1.0-SNAPSHOT") }
 		DependencyHandler.mixin DependencyHandlerMixin
