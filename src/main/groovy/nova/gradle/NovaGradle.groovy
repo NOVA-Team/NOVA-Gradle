@@ -47,6 +47,7 @@ class NovaGradle implements Plugin<Project> {
 		//Add jcenter and NOVA repos
 		project.repositories.with {
 			add(jcenter())
+			add(mavenLocal())
 			add(maven { MavenArtifactRepository repo ->
 				repo.name = "NovaAPI"
 				repo.url = "http://maven.novaapi.net/"
@@ -134,6 +135,11 @@ class NovaGradle implements Plugin<Project> {
 		static Dependency nova(DependencyHandler self, String version) {
 			self.add("runtime", "nova.core:NOVA-Core:$version")
 			self.create("nova.core:NOVA-Core:$version:api")
+			self.add("testCompile", "junit:junit:4.12")
+			self.add("testCompile", "org.assertj:assertj-core:3.0.0")
+			self.add("testCompile", "org.mockito:mockito-core:1.+")
+			self.add("testRuntime", "org.slf4j:slf4j-simple:1.7.10")
+			self.add("testCompile", "nova.core:NOVA-Core:$version:wrappertests")
 		}
 	}
 }
