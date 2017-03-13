@@ -60,10 +60,12 @@ jacocoTestReport {
 	}
 }
 
-task checkTestStyle << {
-	sourceSets.test.java.each { file ->
-		if (file.text.contains("org.junit.Assert")) {
-			throw new GradleException("File $file.name uses junit assertions, please use assertj assertions! See https://joel-costigliola.github.io/assertj/ to learn about assertj.")
+task checkTestStyle {
+	doLast {
+		sourceSets.test.java.each { file ->
+			if (file.text.contains("org.junit.Assert")) {
+				throw new GradleException("File $file.name uses junit assertions, please use assertj assertions! See https://joel-costigliola.github.io/assertj/ to learn about assertj.")
+			}
 		}
 	}
 }
