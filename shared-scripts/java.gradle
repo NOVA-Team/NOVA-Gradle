@@ -1,6 +1,7 @@
 apply from: "https://raw.githubusercontent.com/NOVA-Team/NOVA-Gradle/master/shared-scripts/common.gradle"
 
 apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'jacoco'
 
 tasks.withType(JavaCompile) {
@@ -12,9 +13,9 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-	testCompile "junit:junit:4.12"
-	testCompile "org.assertj:assertj-core:3.0.0"
-	testCompile "org.mockito:mockito-core:1.+"
+	testImplementation "junit:junit:4.+"
+	testImplementation "org.assertj:assertj-core:3.+"
+	testImplementation "org.mockito:mockito-core:1.+"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
