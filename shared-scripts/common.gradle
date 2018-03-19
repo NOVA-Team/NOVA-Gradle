@@ -1,5 +1,7 @@
-def javaversion = java.lang.Integer.parseInt(System.getProperty("java.runtime.version").split("\\.")[1])
-if (javaversion < 8) {
+def java_version = System.getProperty("java.runtime.version").split("\\.");
+def java_major_version = java.lang.Integer.parseInt(java_version[0]);
+def java_minor_version = java.lang.Integer.parseInt(java_version[1]);
+if (java_major_version == 1 && java_minor_version < 8) {
 	throw new GradleException("Please use JDK 8 or above!")
 }
 
