@@ -1,6 +1,13 @@
-def java_version = System.getProperty("java.runtime.version").split("\\.");
+def java_version = System.getProperty("java.runtime.version");
+if (java_version.contains("+")) {
+	java_version = java_version.substring(0, java_version.indexOf('+'));
+}
+if (java_version.contains("-")) {
+	java_version = java_version.substring(0, java_version.indexOf('-'));
+}
+java_version = java_version.split("\\.");
 def java_major_version = java.lang.Integer.parseInt(java_version[0]);
-def java_minor_version = java.lang.Integer.parseInt(java_version[1]);
+def java_minor_version = java_version.length >= 2 ? java.lang.Integer.parseInt(java_version[1]) : 0;
 if (java_major_version == 1 && java_minor_version < 8) {
 	throw new GradleException("Please use JDK 8 or above!")
 }
