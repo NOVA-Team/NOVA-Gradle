@@ -37,7 +37,7 @@ artifacts {
 test {
 	forkEvery = 1
 
-	if (System.env.TRAVIS == "true") {
+	if (System.env.CI == "true") {
 		maxParallelForks = 1
 	} else {
 		maxParallelForks = Runtime.getRuntime().availableProcessors();
